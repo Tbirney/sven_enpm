@@ -142,24 +142,36 @@ def line_to_char(src, line_no):
         char_end += 1
     return char_start, char_end
 
+
 class ModifiedFunc:
     def __init__(self, func_before, func_after, src_before, src_after):
+
+        # func before and func after are lizard functions
         self.func_before = func_before
         self.func_after = func_after
+
+        # src before and src after are src codes
         self.src_before = src_before
         self.src_after = src_after
+
+        # using the line numbers in the functionn objects retrieve the src code
         self.func_src_before = self.get_func_src(self.func_before, self.src_before)
         self.func_src_after = self.get_func_src(self.func_after, self.src_after)
 
+        # create added and deleted key - value list pairs for the line changes
         self.line_changes = dict()
         self.line_changes['deleted'] = list()
         self.line_changes['added'] = list()
 
+
+        # create added and deleted key - value list pairs for the char changes
         self.char_changes = dict()
         self.char_changes['deleted'] = list()
         self.char_changes['added'] = list()
 
+        # diff match path is a function that is used to understand differences in code
         dmp = diff_match_patch()
+
 
         for src_a, src_b, l in [(self.func_src_before, self.func_src_after, self.char_changes['deleted']), (self.func_src_after, self.func_src_before, self.char_changes['added'])]:
             diffs = dmp.diff_main(src_a, src_b)
@@ -224,12 +236,21 @@ class ModifiedFuncs:
     def __init__(self):
         self.funcs = dict()
 
+    # in these functions, func before and func after are lizard function opbejcts
+    # this key is just a tupe of start and end lines for the before and after versions
     def get_key(self, func_before, func_after):
         return (func_before.start_line, func_before.end_line, func_after.start_line, func_after.end_line)
 
+    # check to make sure that we dont already have this key in out dictionary of functions
+    # where the tuple key from get_key is the dictionary key
+    # and a modified_func object is the value
     def has_func(self, func_before, func_after):
         return self.get_key(func_before, func_after) in self.funcs
 
+    # generate the key from lizard functions
+    # return the modified func given the key
+    # if we don't already have this func, add it to our dict and 
+    # return it
     def get_func(self, func_before, func_after, src_before, src_after):
         key = self.get_key(func_before, func_after)
         if not self.has_func(func_before, func_after):
@@ -237,11 +258,16 @@ class ModifiedFuncs:
             self.funcs[key] = func
         return self.funcs[key]
 
+    # this is a wrapper for the modified_func to_json method
+    # for every func we have in our dict, aggregate the calls
+    # to the funcs to_json object
     def to_json(self):
         j = list()
         for key in sorted(self.funcs.keys()):
             j.append(self.funcs[key].to_json())
         return j
+
+        
 
 def parse_diff(file_name, src_before, src_after, diff):
     analysis_before = lizard.analyze_file.analyze_source_code(file_name, src_before)
