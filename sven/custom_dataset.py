@@ -27,9 +27,10 @@ class DatasetBase(Dataset):
             # So it will join custom_data_train_val + train + functions.jsonl
             with open(os.path.join(args.data_dir, mode, f'{vul_type}.jsonl')) as f:
                 lines = f.readlines()
-
-            for line in lines:
+            
+            for l, line in enumerate(lines):
                 # read in the json line describine the code and its changes
+                print(l)
                 diff_j = json.loads(line)
 
                 # determine what language we are using
