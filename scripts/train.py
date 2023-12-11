@@ -12,7 +12,9 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_name', type=str, required=True)
 
+    # will need to point this to our own data
     parser.add_argument('--data_dir', type=str, default='../data_train_val')
+    # probably create a new directory for our own data
     parser.add_argument('--output_dir', type=str, default='../trained/')
     parser.add_argument('--model_type', type=str, default='prefix')
     parser.add_argument('--pretrain_dir', type=str, default=None)
