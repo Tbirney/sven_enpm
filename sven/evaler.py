@@ -4,9 +4,9 @@ import abc
 import torch
 import numpy as np
 
-from sven.model import CodeGenPrefixCausalLM, load_model
-from sven.constant import PROMPTS
-from sven.utils import try_parse
+from model import CodeGenPrefixCausalLM, load_model
+from constant import PROMPTS
+from utils import try_parse
 
 class EvalerBase:
     def __init__(self, args):

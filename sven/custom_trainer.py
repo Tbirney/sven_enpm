@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 from model import save_model, parallelize_model, load_model
-from dataset import PrefixDataset, TextPromptDataset
+from custom_dataset import PrefixDataset
 from utils import set_seed
 
 class TrainerBase:
@@ -249,23 +249,23 @@ class PrefixTrainer(TrainerBase):
         return_dict['loss'] = loss.item()
         return loss, return_dict
 
-class TextPromptTrainer(TrainerBase):
+# class TextPromptTrainer(TrainerBase):
 
-    def __init__(self, args):
-        super().__init__(args)
+#     def __init__(self, args):
+#         super().__init__(args)
 
-    def load_model(self):
-        self.tokenizer, self.model, self.input_device = load_model('lm', self.args.pretrain_dir, True, self.args)
-        self.model.train()
+#     def load_model(self):
+#         self.tokenizer, self.model, self.input_device = load_model('lm', self.args.pretrain_dir, True, self.args)
+#         self.model.train()
 
-    def load_dataset(self):
-        self.dataset = TextPromptDataset(self.args, self.tokenizer, 'train')
-        self.val_dataset = TextPromptDataset(self.args, self.tokenizer, 'val')
+#     def load_dataset(self):
+#         self.dataset = TextPromptDataset(self.args, self.tokenizer, 'train')
+#         self.val_dataset = TextPromptDataset(self.args, self.tokenizer, 'val')
 
-    def step(self, batch):
-        inputs, labels= batch
-        inputs = inputs.to(self.input_device)
-        labels = labels.to(self.input_device)
-        outputs = self.model(inputs, labels=labels)
-        loss = outputs.loss
-        return loss, {'loss': loss.item()}
+#     def step(self, batch):
+#         inputs, labels= batch
+#         inputs = inputs.to(self.input_device)
+#         labels = labels.to(self.input_device)
+#         outputs = self.model(inputs, labels=labels)
+#         loss = outputs.loss
+#         return loss, {'loss': loss.item()}

@@ -5,8 +5,8 @@ import torch
 import random
 from torch.utils.data import Dataset
 
-from sven.constant import BINARY_LABELS, SEC_LABEL, VUL_LABEL, PROMPTS, CWES_TRAINED, CWES_TRAINED_SUBSET
-from sven.utils import get_indent
+from constant import BINARY_LABELS, SEC_LABEL, VUL_LABEL, PROMPTS, CWES_TRAINED, CWES_TRAINED_SUBSET
+from utils import get_indent
 
 class DatasetBase(Dataset):
     def __init__(self, args, tokenizer, mode):

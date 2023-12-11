@@ -3,7 +3,7 @@ import torch
 from typing import Optional, Tuple, Union, List
 from transformers import AutoTokenizer, AutoConfig, logging
 from transformers.modeling_outputs import CausalLMOutputWithPast, CausalLMOutputWithCrossAttentions
-from sven.hf import CodeGenForCausalLM, XGLMForCausalLM, GPT2LMHeadCustomModel, GPT2CustomConfig
+from hf import CodeGenForCausalLM, XGLMForCausalLM, GPT2LMHeadCustomModel, GPT2CustomConfig
 
 class CodeGenPrefixCausalLM(CodeGenForCausalLM):
     def __init__(self, config):
