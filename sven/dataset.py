@@ -13,6 +13,10 @@ class DatasetBase(Dataset):
         self.args = args
         self.tokenizer = tokenizer
         self.dataset = list()
+
+        # i'm not sure if we need the vul type here
+        # since we dont differentiate between the types of the functions
+        # maybe instead of vul type, we should have code type, like "function" 
         if self.args.vul_type is not None:
             vul_types = [self.args.vul_type]
         else:
@@ -20,17 +24,32 @@ class DatasetBase(Dataset):
                 vul_types = CWES_TRAINED_SUBSET
             else:
                 vul_types = CWES_TRAINED
+
+        # vul types in the constant file is just stuff like cwe-119 
+        # which I think will point to the data directory
         for i, vul_type in enumerate(vul_types):
+            # yeah read the file containing the json 
             with open(os.path.join(args.data_dir, mode, f'{vul_type}.jsonl')) as f:
                 lines = f.readlines()
+
             for line in lines:
+                # read in the json line describine the code and its changes
                 diff_j = json.loads(line)
+
+                # determine what language we are using
                 if diff_j['file_name'].endswith('.py'):
                     lang = 'py'
                 else:
                     lang = 'c'
+
+                # these are "sec" and "vul" respectively
                 labels = [SEC_LABEL, VUL_LABEL]
+
+                # retrieve the function sources
                 srcs = [diff_j['func_src_after'], diff_j['func_src_before']]
+
+                # when creating the dataset we will choose what kind of diff 
+                # level we want in order to generate a mask?
                 if self.args.diff_level == 'prog':
                     diffs = [None, None]
                 elif self.args.diff_level == 'line':
@@ -41,6 +60,8 @@ class DatasetBase(Dataset):
                     diffs = [diff_j['char_changes']['added'], diff_j['line_changes']['deleted']]
                 else:
                     raise NotImplementedError()
+
+                # not sure how the ip behavior will work here
                 for label, src, changes in zip(labels, srcs, diffs):
                     self.add_data(label, src, changes, i, lang)
 
@@ -53,23 +74,33 @@ class DatasetBase(Dataset):
 
     def __getitem__(self, item):
         return tuple(torch.tensor(t) for t in self.dataset[item])
+        
 
 class PrefixDataset(DatasetBase):
     def __init__(self, args, tokenizer, mode):
         super().__init__(args, tokenizer, mode)
 
+    # create a tensor of the src code, its vulnerability ID(what kind of vulnerability it is),
+    # its label ID (0 for vul, 1 for sec) and then its changes. Then append that tensor to our data
     def add_data(self, label, src, changes, vul_id, lang):
         control_id = BINARY_LABELS.index(label)    
         data = self.get_tensor(src, vul_id, control_id, changes)
         if data is not None:
             self.dataset.append(data)
 
+    # create a tensor using our code, vul_id, control_id, and its changes
     def get_tensor(self, src, vul_id, control_id, changes):
+        # tokenize the src code
         be = self.tokenizer.encode_plus(src)
         tokens = be.data['input_ids']
-        if len(tokens) > self.args.max_num_tokens: return None
 
+        if len(tokens) > self.args.max_num_tokens: return None
+        
+        # this will likely always be 1 in our case
         min_changed_tokens = (2 if self.args.vul_type in ('cwe-invalid', 'cwe-valid') else 1)
+
+        # i think this is generating the mask for the changes 
+        # over the tokens over the source code
         if changes is None:
             weights = [1] * len(tokens)
         else:
@@ -86,6 +117,9 @@ class PrefixDataset(DatasetBase):
 
         return tokens, weights, control_id, vul_id
 
+
+# i don't know if we're going to need this yet
+# depends on this handles the text prompts for when we want to wvaluate our dataset
 class TextPromptDataset(DatasetBase):
     def __init__(self, args, tokenizer, mode):
         super().__init__(args, tokenizer, mode)
