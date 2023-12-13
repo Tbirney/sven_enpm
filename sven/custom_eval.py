@@ -18,7 +18,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_name', type=str, required=True)
 
-    parser.add_argument('--eval_type', type=str, choices=['trained', 'trained_subset', 'prompts', 'gen_1', 'gen_2'], default='trained')
+    parser.add_argument('--eval_type', type=str, choices=['trained', 'trained_subset','gen_1', 'gen_2'], default='trained')
     parser.add_argument('--vul_type', type=str, default='functions')
     parser.add_argument('--model_type', type=str, choices=['lm', 'prefix'], default='prefix')
     parser.add_argument('--model_dir', type=str, default=None)
@@ -44,6 +44,7 @@ def get_args():
     args.data_dir = os.path.join(args.data_dir, args.eval_type)
 
     return args
+    
 
 def get_evaler(args):
     if args.model_type == 'lm':
@@ -62,12 +63,9 @@ def eval_single(args, evaler, controls, output_dir, data_dir, vul_type, scenario
     s_out_dir = os.path.join(output_dir, scenario)
     os.makedirs(s_out_dir)
     s_in_dir = os.path.join(data_dir, scenario)
-    with open(os.path.join(s_in_dir, 'info.json')) as f:
-        info = json.load(f)
+
     with open(os.path.join(s_in_dir, 'file_context.'+info['language'])) as f:
         file_context = f.read()
-    with open(os.path.join(s_in_dir, 'func_context.'+info['language'])) as f:
-        func_context = f.read()
 
     for control_id, control in enumerate(controls):
         set_seed(args)
