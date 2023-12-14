@@ -18,7 +18,7 @@ class EvalerBase:
         raise NotImplementedError()
 
     @abc.abstractclassmethod
-    def sample(self, file_context, func_context, control, lang):
+    def sample(self, input_src, control, lang):
         raise NotImplementedError()
 
     def truncate(self, completion, lang):
@@ -32,16 +32,7 @@ class EvalerBase:
                 last_comment_str = '\n    #'
                 if last_comment_str in completion:
                     completion = completion[:completion.rfind(last_comment_str)]
-        elif lang == 'c':
-            if '\n}' in completion:
-                completion = completion[:completion.find('\n}')+2]
-            else:
-                last_comment_strs = ['\n    //', '\n    /*']
-                for last_comment_str in last_comment_strs:
-                    if last_comment_str in completion:
-                        completion = completion[:completion.rfind(last_comment_str)]
-                        completion = completion.rstrip() + '\n}'
-
+        
             lines = completion.split('\n')
             final_lines = []
             for line in lines:
