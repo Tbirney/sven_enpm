@@ -7,9 +7,9 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import AdamW, get_linear_schedule_with_warmup
 
-from sven.model import save_model, parallelize_model, load_model
-from sven.dataset import PrefixDataset, TextPromptDataset
-from sven.utils import set_seed
+from model import save_model, parallelize_model, load_model
+from dataset import PrefixDataset, TextPromptDataset
+from utils import set_seed
 
 class TrainerBase:
     def __init__(self, args):

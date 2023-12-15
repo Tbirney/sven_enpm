@@ -5,8 +5,8 @@ import torch
 import random
 from torch.utils.data import Dataset
 
-from sven.constant import BINARY_LABELS, SEC_LABEL, VUL_LABEL, PROMPTS, CWES_TRAINED, CWES_TRAINED_SUBSET
-from sven.utils import get_indent
+from constant import BINARY_LABELS, SEC_LABEL, VUL_LABEL, PROMPTS, CWES_TRAINED, CWES_TRAINED_SUBSET
+from utils import get_indent
 
 class DatasetBase(Dataset):
     def __init__(self, args, tokenizer, mode):
@@ -37,6 +37,7 @@ class DatasetBase(Dataset):
                 diff_j = json.loads(line)
 
                 # determine what language we are using
+                # probably wont need this if we're only dealing with python files
                 if diff_j['file_name'].endswith('.py'):
                     lang = 'py'
                 else:
@@ -74,7 +75,7 @@ class DatasetBase(Dataset):
 
     def __getitem__(self, item):
         return tuple(torch.tensor(t) for t in self.dataset[item])
-        
+
 
 class PrefixDataset(DatasetBase):
     def __init__(self, args, tokenizer, mode):
