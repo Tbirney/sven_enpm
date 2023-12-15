@@ -3,7 +3,7 @@ import torch
 from typing import Optional, Tuple, Union, List
 from transformers import AutoTokenizer, AutoConfig, logging
 from transformers.modeling_outputs import CausalLMOutputWithPast, CausalLMOutputWithCrossAttentions
-from sven.hf import CodeGenForCausalLM, XGLMForCausalLM, GPT2LMHeadCustomModel, GPT2CustomConfig
+from hf import CodeGenForCausalLM, XGLMForCausalLM, GPT2LMHeadCustomModel, GPT2CustomConfig
 
 class CodeGenPrefixCausalLM(CodeGenForCausalLM):
     def __init__(self, config):
@@ -282,8 +282,11 @@ def model_from_pretrained(lm_path, model_type, config):
         assert False
 
     if config is None:
+        print(f"loading model no config")
         model = model_class.from_pretrained(lm_path, **kwargs)
+
     else:
+        print(f"loading model with config")
         model = model_class.from_pretrained(lm_path, **kwargs, config=config)
 
     return model
@@ -319,8 +322,15 @@ def load_model(model_type, path, is_training, args):
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     if model_type == 'lm':
-        config = config_from_pretrained(path, path)
-        model = model_from_pretrained(path, model_type, config)
+        print('got to load model')
+        try:
+            config = config_from_pretrained(path, path)
+            print('config loaded')
+            model = model_from_pretrained(path, model_type, config)
+            print('model loaded')
+        except Exception as e:
+            print(e)
+
     elif model_type == 'prefix':
         if is_training:
             lm_path = path

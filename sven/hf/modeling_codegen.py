@@ -285,10 +285,12 @@ class CodeGenMLP(nn.Module):
 class CodeGenBlock(nn.Module):
     def __init__(self, config):
         super().__init__()
+    
         inner_dim = config.n_inner if config.n_inner is not None else 4 * config.n_embd
         self.ln_1 = nn.LayerNorm(config.n_embd, eps=config.layer_norm_epsilon)
         self.attn = CodeGenAttention(config)
         self.mlp = CodeGenMLP(inner_dim, config)
+        print('created code gen block')
 
     def forward(
         self,
@@ -663,7 +665,9 @@ class CodeGenForCausalLM(CodeGenPreTrainedModel):
 
     def __init__(self, config):
         super().__init__(config)
+        print('creating transformer')
         self.transformer = CodeGenModel(config)
+        print('Created transformer')
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size)
 
         # Initialize weights and apply final processing

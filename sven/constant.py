@@ -2,6 +2,10 @@ SEC_LABEL = 'sec'
 VUL_LABEL = 'vul'
 BINARY_LABELS = [SEC_LABEL, VUL_LABEL]
 
+IN_REPO_LABEL = 'in_repo'
+OUT_REPO_LABEL = 'out_repo'
+REPO_BINARY_LABELS = [IN_REPO_LABEL, OUT_REPO_LABEL]
+
 CWES_TRAINED = [
     'cwe-089',
     'cwe-125',

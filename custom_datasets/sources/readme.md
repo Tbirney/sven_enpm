@@ -1,1 +1,0 @@
-This is used to extract functions and metadata about the files

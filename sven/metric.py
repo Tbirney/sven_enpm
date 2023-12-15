@@ -7,7 +7,7 @@ import scipy.stats
 from tabulate import tabulate
 from collections import OrderedDict
 
-from sven.constant import CWES_DICT, VAL_SCENARIOS
+from constant import CWES_DICT, VAL_SCENARIOS
 
 class SecEvalRun:
     TOP_K = [1, 5, 10]
