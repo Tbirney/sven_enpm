@@ -9,6 +9,7 @@ import libcst as cst
 from libcst.metadata import PositionProvider
 from libcst._position import CodePosition
 from collections import OrderedDict
+import shutil
 
 from custom_evaler import LMEvaler, PrefixEvaler
 from utils import set_seed, set_logging, set_devices
@@ -60,8 +61,8 @@ def get_evaler(args):
 
 def eval_single(args, evaler, controls, output_dir, data_dir, vul_type, scenario):
     s_out_dir = os.path.join(output_dir, scenario)
-    os.remove(s_out_dir)
-    os.makedirs(s_out_dir, exist_ok = True)
+    shutil.rmtree(s_out_dir, ignore_errors = True)
+    os.makedirs(s_out_dir)
 
     # this just points to the current file in the data_eval/trained dir
     s_in_dir = os.path.join(data_dir, scenario)
@@ -71,6 +72,8 @@ def eval_single(args, evaler, controls, output_dir, data_dir, vul_type, scenario
         func_context = f.read()
 
     # 0 - IN_REPO     0 - OUT_REPO
+    # limit to in repo because we dont need to do adversarial testing
+    # sppeds up eval
     for control_id, control in enumerate(controls):
         set_seed(args)
         with torch.no_grad():

@@ -72,6 +72,7 @@ class LMEvaler(EvalerBase):
         super().__init__(args)
 
     def load_model(self):
+        print(f"Model dir is {self.args.model_dir}")
         self.tokenizer, self.model, self.input_device = load_model('lm', self.args.model_dir, False, self.args)
         self.model.eval()
 

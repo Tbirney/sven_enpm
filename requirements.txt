@@ -8,3 +8,4 @@ scipy
 pyyaml
 yamlize
 libcst
+comment_parser
