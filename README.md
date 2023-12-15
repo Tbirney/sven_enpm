@@ -1,6 +1,38 @@
 # SVEN: Security Hardening and Adversarial Testing for Code LLMs
 SVEN enables controlling LLMs to generate secure (for security hardening) or unsafe code (for adversarial testing), while maintaining functional correctness. It achieves this by learning continuous prompts (or prefixes) with specialized loss terms on our curated dataset. This repository contains SVEN's source code and trained prefixes, as well as training and evaluation data. For more technical details, check our [paper](https://arxiv.org/abs/2302.05319).
 
+## For Anyone in ENPM809K
+
+### Dataset
+The Dataset generation functions are located in /srcipts/extract_python_files.ipynb and /sven/dataset_json_generator.iypynb
+The script we used to evaluate the model is /scripts/repo_evaluate_output.ipynb
+
+The custom dataset class file is in /sven/custom_dataset.py
+
+### Model
+Custom scripts for training and output generation are
+/sven/custom_train.py
+/sven/custom_treainer.py
+
+/sven/custom_eval.py
+/sven/custom_evaler.py
+
+## Running 
+
+To train the prefix model, run 
+
+```python3 custom_train.py --output_name 350m-prefix-new --pretrain_dir 350m```
+
+To evaluate the baseline LM, run
+
+```python3 custom_eval.py --model_type lm --model_dir 350m --output_name repo-eval-350m-lm```
+
+To evaluate the prefix model, run 
+
+```python3 custom_eval.py --model_type prefix --model_dir ../custom_trained/350m-prefix-new/checkpoint-last --output_name repo-eval-350m-prefix```
+
+Model outputs are stored in the experiments folder
+
 ## Directory Structure
 The directory structure of this repository is shown as below:
 ```
